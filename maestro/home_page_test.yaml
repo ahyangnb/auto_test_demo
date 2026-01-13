@@ -1,0 +1,31 @@
+appId: com.example.auto_test_demo
+name: "Home Page Tests"
+---
+
+# Test: should display initial counter value and verify home route
+- launchApp:
+    clearState: true
+- assertVisible: "Flutter Demo Home Page"
+- assertVisible: "You have pushed the button this many times:"
+- assertVisible: "0"
+- assertVisible: "Go to Detail"
+- assertVisible: "Go to Note"
+
+# Test: should increment counter when Increment button is tapped
+- tapOn: "Increment"
+- assertVisible: "1"
+- assertNotVisible: "0"
+
+- tapOn: "Increment"
+- assertVisible: "2"
+- assertNotVisible: "1"
+
+# Test: should increment counter multiple times
+- launchApp:
+    clearState: true
+- assertVisible: "0"
+- repeat:
+    times: 5
+    commands:
+      - tapOn: "Increment"
+- assertVisible: "5"

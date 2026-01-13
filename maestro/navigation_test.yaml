@@ -1,0 +1,76 @@
+appId: com.example.auto_test_demo
+name: "Navigation Tests"
+---
+
+# Test: should navigate to detail page when "Go to Detail" button is tapped
+- launchApp:
+    clearState: true
+- assertVisible: "Flutter Demo Home Page"
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "Counter value from Home:"
+- assertVisible: "0"
+
+# Test: should pass correct counter value to detail page after incrementing
+- launchApp:
+    clearState: true
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Increment"
+- assertVisible: "3"
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "3"
+
+# Test: should navigate back to home page from detail page
+- launchApp:
+    clearState: true
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# Test: should preserve counter value after navigating back from detail
+- launchApp:
+    clearState: true
+- repeat:
+    times: 5
+    commands:
+      - tapOn: "Increment"
+- assertVisible: "5"
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "5"
+- back
+- assertVisible: "Flutter Demo Home Page"
+- assertVisible: "5"
+
+# Test: should verify complete navigation flow
+- launchApp:
+    clearState: true
+
+# Step 1: Verify initial state
+- assertVisible: "0"
+
+# Step 2: Increment to 2
+- tapOn: "Increment"
+- tapOn: "Increment"
+- assertVisible: "2"
+
+# Step 3: Navigate to detail
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "2"
+
+# Step 4: Go back
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# Step 5: Increment more
+- tapOn: "Increment"
+- assertVisible: "3"
+
+# Step 6: Navigate to detail again
+- tapOn: "Go to Detail"
+- assertVisible: "3"

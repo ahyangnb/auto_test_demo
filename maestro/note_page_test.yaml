@@ -1,0 +1,76 @@
+appId: com.example.auto_test_demo
+name: "Note Page Tests"
+---
+
+# Test: should navigate to note page and display random number
+- launchApp:
+    clearState: true
+- assertVisible: "Go to Note"
+- tapOn: "Go to Note"
+- assertVisible: "Note Page"
+- assertVisible:
+    text: "Random Number:.*"
+    enabled: true
+
+# Test: should save and display note using SharedPreferences
+- launchApp:
+    clearState: true
+- tapOn: "Go to Note"
+- assertVisible: "Note Page"
+- tapOn: "Your Note"
+- inputText: "Test note content"
+- hideKeyboard
+- tapOn: "Save Note"
+- assertVisible: "Note saved successfully!"
+- assertVisible: "Saved Note:"
+- assertVisible: "Test note content"
+
+# Test: should clear note when clear button is tapped
+- launchApp:
+    clearState: true
+- tapOn: "Go to Note"
+- tapOn: "Your Note"
+- inputText: "Note to be cleared"
+- hideKeyboard
+- tapOn: "Save Note"
+- assertVisible: "Note to be cleared"
+- tapOn: "Clear Note"
+- assertNotVisible: "Saved Note:"
+
+# Test: should navigate back from note page to home
+- launchApp:
+    clearState: true
+- tapOn: "Go to Note"
+- assertVisible: "Note Page"
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# Test: should persist note across navigation
+- launchApp:
+    clearState: true
+- tapOn: "Go to Note"
+- tapOn: "Your Note"
+- inputText: "Persistent note"
+- hideKeyboard
+- tapOn: "Save Note"
+- assertVisible: "Note saved successfully!"
+- back
+- assertVisible: "Flutter Demo Home Page"
+- tapOn: "Go to Note"
+- assertVisible: "Persistent note"
+
+# Test: should verify random number is consistent across app
+- launchApp:
+    clearState: true
+- tapOn: "Go to Note"
+- assertVisible:
+    text: "Random Number:.*"
+    enabled: true
+- back
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- back
+- tapOn: "Go to Note"
+- assertVisible:
+    text: "Random Number:.*"
+    enabled: true

@@ -1,0 +1,125 @@
+appId: com.example.auto_test_demo
+---
+
+# ========================================
+# MyHomePage Integration Tests
+# ========================================
+
+# Test: should display initial counter value and verify home route
+- launchApp:
+    clearState: true
+- assertVisible: "Flutter Demo Home Page"
+- assertVisible: "You have pushed the button this many times:"
+- assertVisible: "0"
+- assertVisible: "Go to Detail"
+- assertVisible: "Go to Note"
+
+# Test: should increment counter when Increment button is tapped
+- tapOn: "Increment"
+- assertVisible: "1"
+- tapOn: "Increment"
+- assertVisible: "2"
+
+# Test: should increment counter multiple times (continue from 2 to 7)
+- repeat:
+    times: 5
+    commands:
+      - tapOn: "Increment"
+- assertVisible: "7"
+
+# ========================================
+# Navigation Integration Tests
+# ========================================
+
+# Reset app for navigation tests
+- launchApp:
+    clearState: true
+
+# Test: should navigate to detail page when "Go to Detail" button is tapped
+- assertVisible: "Flutter Demo Home Page"
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "Counter value from Home:"
+- assertVisible: "0"
+
+# Test: should navigate back to home page from detail page
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# Test: should pass correct counter value to detail page after incrementing
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Increment"
+- assertVisible: "3"
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- assertVisible: "3"
+
+# Test: should preserve counter value after navigating back from detail
+- back
+- assertVisible: "Flutter Demo Home Page"
+- assertVisible: "3"
+
+# Test: continue complete navigation flow - increment more and navigate again
+- tapOn: "Increment"
+- assertVisible: "4"
+- tapOn: "Go to Detail"
+- assertVisible: "4"
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# ========================================
+# Note Page Integration Tests
+# ========================================
+
+# Reset app for note page tests
+- launchApp:
+    clearState: true
+
+# Test: should navigate to note page and display random number
+- tapOn: "Go to Note"
+- assertVisible: "Note Page"
+- assertVisible:
+    text: "Random Number:.*"
+    enabled: true
+
+# Test: should navigate back from note page to home
+- back
+- assertVisible: "Flutter Demo Home Page"
+
+# Test: should save and display note using SharedPreferences
+- tapOn: "Go to Note"
+- assertVisible: "Note Page"
+- tapOn: "Your Note"
+- inputText: "Test note content"
+- hideKeyboard
+- tapOn: "Save Note"
+- assertVisible: "Note saved successfully!"
+- assertVisible: "Saved Note:"
+- assertVisible: "Test note content"
+
+# Test: should clear note when clear button is tapped
+- tapOn: "Clear Note"
+- assertNotVisible: "Saved Note:"
+
+# Test: should persist note across navigation
+- tapOn: "Your Note"
+- inputText: "Persistent note"
+- hideKeyboard
+- tapOn: "Save Note"
+- assertVisible: "Note saved successfully!"
+- back
+- assertVisible: "Flutter Demo Home Page"
+- tapOn: "Go to Note"
+- assertVisible: "Persistent note"
+
+# Test: Verify random number consistency - navigate between pages
+- back
+- tapOn: "Go to Detail"
+- assertVisible: "Detail Page"
+- back
+- tapOn: "Go to Note"
+- assertVisible:
+    text: "Random Number:.*"
+    enabled: true
