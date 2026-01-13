@@ -144,7 +144,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              key: const Key('go_to_detail_button'),
               onPressed: () {
                 debugPrint('Navigating to Detail - Random number: ${AppConfig.randomNumber}');
                 context.pushNamed(
@@ -156,7 +155,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              key: const Key('go_to_note_button'),
               onPressed: () {
                 debugPrint('Navigating to Note - Random number: ${AppConfig.randomNumber}');
                 context.pushNamed(AppRoutes.note);
@@ -166,10 +164,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Semantics(
+        label: 'Increment',
+        child: FloatingActionButton(
+          onPressed: _incrementCounter,
+          tooltip: 'Increment',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
@@ -187,7 +188,6 @@ class DetailPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Detail Page'),
         leading: IconButton(
-          key: const Key('back_button'),
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
@@ -204,7 +204,6 @@ class DetailPage extends StatelessWidget {
             Text(
               '$counter',
               style: Theme.of(context).textTheme.headlineLarge,
-              key: const Key('detail_counter_value'),
             ),
           ],
         ),
@@ -283,7 +282,6 @@ class _NotePageState extends State<NotePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Note Page'),
         leading: IconButton(
-          key: const Key('note_back_button'),
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             debugPrint('Navigating back from Note - Random number: ${AppConfig.randomNumber}');
@@ -301,11 +299,9 @@ class _NotePageState extends State<NotePage> {
                   Text(
                     'Random Number: ${AppConfig.randomNumber}',
                     style: Theme.of(context).textTheme.titleMedium,
-                    key: const Key('random_number_text'),
                   ),
                   const SizedBox(height: 16),
                   TextField(
-                    key: const Key('note_text_field'),
                     controller: _noteController,
                     maxLines: 5,
                     decoration: const InputDecoration(
@@ -319,7 +315,6 @@ class _NotePageState extends State<NotePage> {
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          key: const Key('save_note_button'),
                           onPressed: _saveNote,
                           icon: const Icon(Icons.save),
                           label: const Text('Save Note'),
@@ -328,7 +323,6 @@ class _NotePageState extends State<NotePage> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton.icon(
-                          key: const Key('clear_note_button'),
                           onPressed: _clearNote,
                           icon: const Icon(Icons.delete),
                           label: const Text('Clear Note'),
@@ -347,7 +341,6 @@ class _NotePageState extends State<NotePage> {
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      key: const Key('saved_note_display'),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,

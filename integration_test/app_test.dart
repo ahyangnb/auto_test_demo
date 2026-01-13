@@ -131,7 +131,6 @@ void main() {
       expect(find.text('Counter value from Home:'), findsOneWidget);
       
       // Verify counter value passed is 0 (initial value)
-      expect(find.byKey(const Key('detail_counter_value')), findsOneWidget);
       expect(find.text('0'), findsOneWidget);
     });
 
@@ -176,7 +175,7 @@ void main() {
       debugPrint('On detail page: ${getCurrentRoute()}');
 
       // Tap the back button
-      await tester.tap(find.byKey(const Key('back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       // Verify we are back on home page
@@ -211,7 +210,7 @@ void main() {
       expect(find.text('5'), findsOneWidget);
 
       // Navigate back to home
-      await tester.tap(find.byKey(const Key('back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       // Verify counter is still 5 on home page
@@ -247,7 +246,7 @@ void main() {
       debugPrint('Step 3: On detail page, counter = 2');
 
       // Step 4: Go back
-      await tester.tap(find.byKey(const Key('back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
       expect(getCurrentRoute(), equals(AppPaths.home));
       debugPrint('Step 4: Back on home page');
@@ -286,7 +285,6 @@ void main() {
       expect(find.text('Note Page'), findsOneWidget);
 
       // Verify random number is displayed
-      expect(find.byKey(const Key('random_number_text')), findsOneWidget);
       expect(find.textContaining('Random Number:'), findsOneWidget);
       debugPrint('Random number displayed: ${AppConfig.randomNumber}');
     });
@@ -306,21 +304,21 @@ void main() {
       expect(find.text('Note Page'), findsOneWidget);
 
       // Find the text field and enter a note
-      final textField = find.byKey(const Key('note_text_field'));
+      final textField = find.byType(TextField);
       expect(textField, findsOneWidget);
       
       await tester.enterText(textField, 'Test note content');
       await tester.pumpAndSettle();
 
       // Tap the save button
-      await tester.tap(find.byKey(const Key('save_note_button')));
+      await tester.tap(find.text('Save Note'));
       await tester.pumpAndSettle();
 
       // Verify snackbar appears
       expect(find.text('Note saved successfully!'), findsOneWidget);
 
       // Verify saved note is displayed
-      expect(find.byKey(const Key('saved_note_display')), findsOneWidget);
+      expect(find.text('Saved Note:'), findsOneWidget);
       expect(find.text('Test note content'), findsWidgets);
     });
 
@@ -336,22 +334,22 @@ void main() {
       await tester.pumpAndSettle();
 
       // Enter and save a note
-      final textField = find.byKey(const Key('note_text_field'));
+      final textField = find.byType(TextField);
       await tester.enterText(textField, 'Note to be cleared');
       await tester.pumpAndSettle();
       
-      await tester.tap(find.byKey(const Key('save_note_button')));
+      await tester.tap(find.text('Save Note'));
       await tester.pumpAndSettle();
 
       // Verify note is saved
       expect(find.text('Note to be cleared'), findsWidgets);
 
       // Clear the note
-      await tester.tap(find.byKey(const Key('clear_note_button')));
+      await tester.tap(find.text('Clear Note'));
       await tester.pumpAndSettle();
 
       // Verify note is cleared
-      expect(find.byKey(const Key('saved_note_display')), findsNothing);
+      expect(find.text('Saved Note:'), findsNothing);
     });
 
     testWidgets('should navigate back from note page to home',
@@ -369,7 +367,7 @@ void main() {
       expect(find.text('Note Page'), findsOneWidget);
 
       // Tap back button
-      await tester.tap(find.byKey(const Key('note_back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       // Verify we are back on home page
@@ -389,15 +387,15 @@ void main() {
       await tester.pumpAndSettle();
 
       // Enter and save a note
-      final textField = find.byKey(const Key('note_text_field'));
+      final textField = find.byType(TextField);
       await tester.enterText(textField, 'Persistent note');
       await tester.pumpAndSettle();
       
-      await tester.tap(find.byKey(const Key('save_note_button')));
+      await tester.tap(find.text('Save Note'));
       await tester.pumpAndSettle();
 
       // Go back to home
-      await tester.tap(find.byKey(const Key('note_back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       // Navigate to note page again
@@ -428,7 +426,7 @@ void main() {
       expect(find.text('Random Number: $randomNumber'), findsOneWidget);
 
       // Go back to home
-      await tester.tap(find.byKey(const Key('note_back_button')));
+      await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
 
       // Navigate to detail page
