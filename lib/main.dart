@@ -1,7 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Static random number generated at program start
+class AppConfig {
+  static final int randomNumber = Random().nextInt(10000);
+}
 
 void main() {
+  debugPrint('App started with random number: ${AppConfig.randomNumber}');
   runApp(const MyApp());
 }
 
@@ -9,12 +18,14 @@ void main() {
 class AppRoutes {
   static const String home = 'home';
   static const String detail = 'detail';
+  static const String note = 'note';
 }
 
 // Route paths
 class AppPaths {
   static const String home = '/';
   static const String detail = '/detail';
+  static const String note = '/note';
 }
 
 // Router configuration
@@ -33,6 +44,11 @@ final GoRouter router = GoRouter(
         final counter = state.extra as int? ?? 0;
         return DetailPage(counter: counter);
       },
+    ),
+    GoRoute(
+      path: AppPaths.note,
+      name: AppRoutes.note,
+      builder: (context, state) => const NotePage(),
     ),
   ],
 );
@@ -130,12 +146,22 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               key: const Key('go_to_detail_button'),
               onPressed: () {
+                debugPrint('Navigating to Detail - Random number: ${AppConfig.randomNumber}');
                 context.pushNamed(
                   AppRoutes.detail,
                   extra: _counter,
                 );
               },
               child: const Text('Go to Detail'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              key: const Key('go_to_note_button'),
+              onPressed: () {
+                debugPrint('Navigating to Note - Random number: ${AppConfig.randomNumber}');
+                context.pushNamed(AppRoutes.note);
+              },
+              child: const Text('Go to Note'),
             ),
           ],
         ),
@@ -183,6 +209,159 @@ class DetailPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class NotePage extends StatefulWidget {
+  const NotePage({super.key});
+
+  @override
+  State<NotePage> createState() => _NotePageState();
+}
+
+class _NotePageState extends State<NotePage> {
+  final TextEditingController _noteController = TextEditingController();
+  String _savedNote = '';
+  bool _isLoading = true;
+
+  static const String _noteKey = 'saved_note';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNote();
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savedNote = prefs.getString(_noteKey) ?? '';
+      _noteController.text = _savedNote;
+      _isLoading = false;
+    });
+    debugPrint('Note loaded - Random number: ${AppConfig.randomNumber}');
+  }
+
+  Future<void> _saveNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_noteKey, _noteController.text);
+    setState(() {
+      _savedNote = _noteController.text;
+    });
+    debugPrint('Note saved - Random number: ${AppConfig.randomNumber}');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Note saved successfully!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> _clearNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_noteKey);
+    setState(() {
+      _savedNote = '';
+      _noteController.clear();
+    });
+    debugPrint('Note cleared - Random number: ${AppConfig.randomNumber}');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Note Page'),
+        leading: IconButton(
+          key: const Key('note_back_button'),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            debugPrint('Navigating back from Note - Random number: ${AppConfig.randomNumber}');
+            context.pop();
+          },
+        ),
+      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Random Number: ${AppConfig.randomNumber}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    key: const Key('random_number_text'),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    key: const Key('note_text_field'),
+                    controller: _noteController,
+                    maxLines: 5,
+                    decoration: const InputDecoration(
+                      labelText: 'Your Note',
+                      hintText: 'Enter your note here...',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          key: const Key('save_note_button'),
+                          onPressed: _saveNote,
+                          icon: const Icon(Icons.save),
+                          label: const Text('Save Note'),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          key: const Key('clear_note_button'),
+                          onPressed: _clearNote,
+                          icon: const Icon(Icons.delete),
+                          label: const Text('Clear Note'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red.shade100,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  if (_savedNote.isNotEmpty) ...[
+                    Text(
+                      'Saved Note:',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      key: const Key('saved_note_display'),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _savedNote,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 }
