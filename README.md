@@ -12,3 +12,7 @@ flutter test integration_test/app_test.dart
 maestro test maestro/main_maestro.yaml
 ```
 > see https://docs.maestro.dev/api-reference/commands/tapon for the details.
+
+# Test combine the commits.
+
+Test combine the commits.
